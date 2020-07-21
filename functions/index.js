@@ -15,13 +15,13 @@
 // })
 
 const express = require('express')
-const { WebhookClient } = require('dialogflow-fulfillment')
+// const { WebhookClient } = require('dialogflow-fulfillment')
 const app = express()
 const http = require('https')
 
-function getGlobalInfo(bodyName) {
+function getGlobalInfo (bodyName) {
   return new Promise((resolve, reject) => {
-    const path = `https://api.le-systeme-solaire.net/rest/bodies/?filter[]=englishName,eq,${bodyName}&data=englishName,inclinaison,density,gravity,mass,massValue`
+    const path = `https://api.le-systeme-solaire.net/rest/bodies/?filter[]=englishName,eq,${bodyName}&data=englishName,inclinaison,meanRadius,gravity,mass,massValue`
 
     http.get(path, (res) => {
       let data = ''
@@ -29,24 +29,24 @@ function getGlobalInfo(bodyName) {
       res.on('end', () => {
         // After all the data has been received parse the JSON for desired data
         const response = JSON.parse(data)
+        console.log(response)
         const name = response.bodies[0].englishName
         const mass = response.bodies[0].mass.massValue || 'unknown'
-        const density = response.bodies[0].density
+        const radius = response.bodies[0].meanRadius
         const gravity = response.bodies[0].gravity
 
         // Create response
         const output = `
-      ${name} have a mass of ${mass}
-      with density of ${density} and his gravity is ${gravity}
+      ${name} have a mass of ${mass}*10^26kg
+      with a radius of ${radius}km and his gravity is ${gravity}m/s² !
       `
 
         // Resolve the promise with the output text
-        console.log(output)
+
         resolve(output)
       })
       res.on('error', (error) => {
-        console.log(`Error calling the astral API: ${error}`)
-        reject()
+        reject(new Error(`Error calling the astral API: ${error}`))
       })
     })
   })
@@ -54,16 +54,18 @@ function getGlobalInfo(bodyName) {
 
 app.get('/', (req, res) => res.send('online'))
 app.post('/dialogflow', express.json(), (req, res) => {
+  // const agent = new WebhookClient({ request: req, response: res })
 
   const bodyName = req.body.queryResult.parameters['body-name']
 
-  getGlobalInfo(bodyName).then((output) => res.json({ 'fulfillmentText': output })) // Return the results of the API to Dialogflow
+  getGlobalInfo(bodyName).then((output) => res.json({ fulfillmentText: output })) // Return the results of the API to Dialogflow
     .catch(() => {
-      res.json({ 'fulfillmentText': 'I don\'t know this body, do it exist ?!' })
+      res.json({ fulfillmentText: 'I don\'t know this body, do it exist ?!' })
     })
-  console.log(bodyName)
-  getGlobalInfo(bodyName)
 
+  // const intentMap = new Map()
+  // intentMap.set('get-body-global-info', getGlobalInfo(bodyName))
+  // agent.handleRequest(intentMap)
 })
 
 app.listen(process.env.PORT || 8080)
