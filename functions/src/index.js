@@ -1,22 +1,19 @@
 // @flow
 
-const express = require('express');
 // const { WebhookClient } = require('dialogflow-fulfillment')
-const app = express();
-const http = require('https');
-const functions = require('firebase-functions');
+const http: any = require('https');
+const functions: any = require('firebase-functions');
 
-function getGlobalInfo(bodyName) {
+function getGlobalInfo(bodyName: string): any {
   return new Promise((resolve, reject) => {
     const path = `https://api.le-systeme-solaire.net/rest/bodies/?filter[]=englishName,eq,${bodyName}&data=englishName,inclinaison,meanRadius,gravity,mass,massValue`;
 
     http.get(path, (res) => {
-      let data = '';
+      let data: string = '';
       res.on('data', (d) => { data += d; });
       res.on('end', () => {
         // After all the data has been received parse the JSON for desired data
         const response: any = JSON.parse(data);
-        console.log(response);
         const name: string = response.bodies[0].englishName;
         const mass: string = response.bodies[0].mass.massValue || 'unknown';
         const radius: string = response.bodies[0].meanRadius;
@@ -38,13 +35,10 @@ function getGlobalInfo(bodyName) {
   });
 }
 
-app.get('/', (req, res) => res.send('online'));
-// app.post('/dialogflow', express.json(), (req, res) => {
 exports.dialogflowFirebaseFulfillment = functions.https.onRequest((req, res) => {
   // const agent = new WebhookClient({ request: req, response: res })
 
-  const bodyName = req.body.queryResult.parameters['body-name'];
-
+  const bodyName: string = req.body.queryResult.parameters['body-name'];
   getGlobalInfo(bodyName)
     .then((output) => {
       res.json({ fulfillmentText: output });
@@ -57,7 +51,5 @@ exports.dialogflowFirebaseFulfillment = functions.https.onRequest((req, res) => 
   // intentMap.set('get-body-global-info', getGlobalInfo(bodyName))
   // agent.handleRequest(intentMap)
 });
-
-// app.listen(process.env.PORT || 8080)
 
 // module.exports = getGlobalInfo
