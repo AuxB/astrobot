@@ -1,12 +1,14 @@
 // @flow
 
-// const { WebhookClient } = require('dialogflow-fulfillment')
 const http: any = require('https');
 const functions: any = require('firebase-functions');
 
-function getGlobalInfo(bodyName: string): any {
+
+/*function take two parameters : bodyName for the name of astral body and intentType 
+to determine what response what response we send after the call API  */
+function getGlobalInfo(bodyName: string, intentType: string): any {
   return new Promise((resolve, reject) => {
-    const path = `https://api.le-systeme-solaire.net/rest/bodies/?filter[]=englishName,eq,${bodyName}&data=englishName,inclinaison,meanRadius,gravity,mass,massValue`;
+    const path = `https://api.le-systeme-solaire.net/rest/bodies/?filter[]=englishName,eq,${bodyName}&data=englishName,inclinaison,meanRadius,gravity,mass,massValue,isPlanet`;
 
     http.get(path, (res) => {
       let data: string = '';
@@ -17,15 +19,19 @@ function getGlobalInfo(bodyName: string): any {
         const name: string = response.bodies[0].englishName;
         const mass: string = response.bodies[0].mass.massValue || 'unknown';
         const radius: string = response.bodies[0].meanRadius;
-        const { gravity } = response.bodies[0];
-
+        const gravity: string = response.bodies[0].gravity;
+        const isPlanet: boolean = response.bodies[0].isPlanet;
         // Create response
-        const output: string = `
-      ${name} have a mass of ${mass}*10^26kg
-      with a radius of ${radius}km and his gravity is ${gravity}m/s² !
-      `;
+        let output: string = ''
+        if (intentType === 'get-body-global-info') {
+          output = `${name} have a mass of ${mass}*10^26kg
+        with a radius of ${radius}km and his gravity is ${gravity}m/s² !`;
+        } else if(intentType === 'get-is-planet') {
+          isPlanet
+            ? output = `Yes, ${name} is a beautiful planet !`
+            : output = `${name} is not a planet... Maybe a star or sattelite !`
+        }
         // Resolve the promise with the output text
-
         resolve(output);
       });
       res.on('error', (error) => {
@@ -36,20 +42,15 @@ function getGlobalInfo(bodyName: string): any {
 }
 
 exports.dialogflowFirebaseFulfillment = functions.https.onRequest((req, res) => {
-  // const agent = new WebhookClient({ request: req, response: res })
-
+  //retrieve data bodyname and displa send by the dialogflow bot
   const bodyName: string = req.body.queryResult.parameters['body-name'];
-  getGlobalInfo(bodyName)
+  const intentType: string = req.body.queryResult.intent.displayName;
+
+  getGlobalInfo(bodyName, intentType)
     .then((output) => {
       res.json({ fulfillmentText: output });
     })
     .catch(() => {
-      res.json({ fulfillmentText: 'I don\'t know this body, do it exist ?!' });
+      res.json({ fulfillmentText: 'I don\'t know this body, does it exist ?!' });
     });
-
-  // const intentMap = new Map()
-  // intentMap.set('get-body-global-info', getGlobalInfo(bodyName))
-  // agent.handleRequest(intentMap)
 });
-
-// module.exports = getGlobalInfo
