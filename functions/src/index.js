@@ -16,7 +16,7 @@ function getGlobalInfo(bodyName: string, intentType: string): any {
       res.on('end', () => {
         // After all the data has been received parse the JSON for desired data
         const response: any = JSON.parse(data);
-        if(response.bodies.length <= 0){
+        if(response.bodies.length <= 0 || intentType === ''){
           return reject(new Error('Error calling the astral API'))
         }
         const name: string = response.bodies[0].englishName;
