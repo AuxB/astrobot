@@ -8,7 +8,7 @@ const functions: any = require('firebase-functions');
 to determine what response what response we send after the call API  */
 function getGlobalInfo(bodyName: string, intentType: string): any {
   return new Promise((resolve, reject) => {
-    const path = `https://api.le-systeme-solaire.net/rest/bodies/?filter[]=englishName,eq,${bodyName}&data=englishName,inclinaison,meanRadius,gravity,mass,massValue,isPlanet`;
+    const path: string = `https://api.le-systeme-solaire.net/rest/bodies/?filter[]=englishName,eq,${bodyName}&data=englishName,inclinaison,meanRadius,gravity,mass,massValue,isPlanet`;
 
     http.get(path, (res) => {
       let data: string = '';
@@ -16,8 +16,11 @@ function getGlobalInfo(bodyName: string, intentType: string): any {
       res.on('end', () => {
         // After all the data has been received parse the JSON for desired data
         const response: any = JSON.parse(data);
+        if(response.bodies.length <= 0){
+          return reject(new Error('Error calling the astral API'))
+        }
         const name: string = response.bodies[0].englishName;
-        const mass: string = response.bodies[0].mass.massValue || 'unknown';
+        const mass: string = response.bodies[0].mass.massValue;
         const radius: string = response.bodies[0].meanRadius;
         const gravity: string = response.bodies[0].gravity;
         const isPlanet: boolean = response.bodies[0].isPlanet;
@@ -25,8 +28,8 @@ function getGlobalInfo(bodyName: string, intentType: string): any {
         let output: string = ''
         if (intentType === 'get-body-global-info') {
           output = `${name} have a mass of ${mass}*10^26kg
-        with a radius of ${radius}km and his gravity is ${gravity}m/s² !`;
-        } else if(intentType === 'get-is-planet') {
+          with a radius of ${radius}km and his gravity is ${gravity}m/s² !`;
+        } else if (intentType === 'get-is-planet') {
           isPlanet
             ? output = `Yes, ${name} is a beautiful planet !`
             : output = `${name} is not a planet... Maybe a star or sattelite !`
