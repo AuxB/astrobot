@@ -8,5 +8,6 @@
     "promise",
     "flowtype"
   ],
-  "extends": "airbnb"
+  "extends": "airbnb",
+  "mocha": true
 }
