@@ -9,5 +9,8 @@
     "flowtype"
   ],
   "extends": "airbnb",
-  "mocha": true
+  "env": {
+    "mocha": true
+  }
+  // "mocha": true
 }

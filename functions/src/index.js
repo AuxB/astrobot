@@ -3,8 +3,7 @@
 const http: any = require('https');
 const functions: any = require('firebase-functions');
 
-
-/*function take two parameters : bodyName for the name of astral body and intentType 
+/* function take two parameters : bodyName for the name of astral body and intentType
 to determine what response what response we send after the call API  */
 function getGlobalInfo(bodyName: string, intentType: string): any {
   return new Promise((resolve, reject) => {
@@ -16,26 +15,28 @@ function getGlobalInfo(bodyName: string, intentType: string): any {
       res.on('end', () => {
         // After all the data has been received parse the JSON for desired data
         const response: any = JSON.parse(data);
-        if(response.bodies.length <= 0 || intentType === ''){
-          return reject(new Error('Error calling the astral API'))
+        if (response.bodies.length <= 0 || intentType === '' || bodyName === '') {
+          return reject(new Error('Error calling the astral API'));
         }
         const name: string = response.bodies[0].englishName;
         const mass: string = response.bodies[0].mass.massValue;
         const radius: string = response.bodies[0].meanRadius;
-        const gravity: string = response.bodies[0].gravity;
-        const isPlanet: boolean = response.bodies[0].isPlanet;
+        const { gravity } = response.bodies[0];
+        const { isPlanet } = response.bodies[0];
         // Create response
-        let output: string = ''
+        let output: string = '';
         if (intentType === 'get-body-global-info') {
           output = `${name} have a mass of ${mass}*10^26kg
           with a radius of ${radius}km and his gravity is ${gravity}m/s² !`;
         } else if (intentType === 'get-is-planet') {
-          isPlanet
-            ? output = `Yes, ${name} is a beautiful planet !`
-            : output = `${name} is not a planet... Maybe a star or sattelite !`
+          if (isPlanet) {
+            output = `Yes, ${name} is a beautiful planet !`;
+          } else {
+            output = `${name} is not a planet... Maybe a star or satellite !`;
+          }
         }
         // Resolve the promise with the output text
-        resolve(output);
+        return resolve(output);
       });
       res.on('error', (error) => {
         reject(new Error(`Error calling the astral API: ${error}`));
@@ -45,10 +46,9 @@ function getGlobalInfo(bodyName: string, intentType: string): any {
 }
 
 exports.dialogflowFirebaseFulfillment = functions.https.onRequest((req, res) => {
-  //retrieve data bodyname and displa send by the dialogflow bot
+  // retrieve data bodyname and displa send by the dialogflow bot
   const bodyName: string = req.body.queryResult.parameters['body-name'];
   const intentType: string = req.body.queryResult.intent.displayName;
-
   getGlobalInfo(bodyName, intentType)
     .then((output) => {
       res.json({ fulfillmentText: output });
