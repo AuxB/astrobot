@@ -3,8 +3,12 @@
 const http: any = require('https');
 const functions: any = require('firebase-functions');
 
-/* function who return a string after conditions
-who compare parameters of two bodies */
+/**
+* @function - Compare multiple value to determine the sentences to send
+* @param {object} firstBody - The current body
+* @param {object} scndBody - The second body to compare
+* @return {string}
+*/
 function compareBody(firstBody: Object, scndBody: Object): string {
   let messageCompare: string = '';
   if (firstBody.radius > scndBody.radius) {
@@ -20,8 +24,13 @@ function compareBody(firstBody: Object, scndBody: Object): string {
   return messageCompare;
 }
 
-/* function who return the final string after
-a switch case who compare according to the intentType */
+/**
+* @function - Switch case who compare according to the intentType
+* @param {object} firstBody - The current body
+* @param {object} scndBody - The second body to compare
+* @param {object} intentType - The type of the intent
+* @return {string}
+*/
 function setOutput(firstBody: Object, scndBody: Object, intentType: string): string {
   let message: string = '';
   switch (intentType) {
@@ -46,8 +55,14 @@ function setOutput(firstBody: Object, scndBody: Object, intentType: string): str
   return message;
 }
 
-/* function take two parameters : bodyName for the name of astral body and intentType
-to determine what response what response we send after the call API  */
+/**
+* @function - Make call api with the parameters and create object to store the data
+* @param {object} bodyName - The current body
+* @param {object} newBody - The second body to compare
+* @param {object} intentType - The type of the intent
+* @return {string}
+@
+*/
 function getGlobalInfo(bodyName: string, newBody: string, intentType: string): any {
   return new Promise((resolve, reject) => {
     const path: string = `https://api.le-systeme-solaire.net/rest/bodies/?satisfy=any&filter[]=englishName,eq,${bodyName}&filter[]=englishName,eq,${newBody}&data=englishName,inclinaison,meanRadius,gravity,mass,massValue,isPlanet`;
@@ -103,8 +118,15 @@ function getGlobalInfo(bodyName: string, newBody: string, intentType: string): a
   });
 }
 
+/**
+* @function - Retrieve data from Dialogflow and send the response through getGlobalInfo and res.json
+* @param {object} req - The request of Dialogflow
+* @param {object} res - The response send to dialogflow
+* @return {object}
+@
+*/
 exports.dialogflowFirebaseFulfillment = functions.https.onRequest((req, res) => {
-  // retrieve data bodyname and displa send by the dialogflow bot
+  // retrieve data bodyname and display send by the dialogflow bot
   const bodyName: string = req.body.queryResult.outputContexts.parameters['body-name'];
   const newBodyName: string = req.body.queryResult.parameters['new-body-name'] || 'S/2017 J 8';
   const intentType: string = req.body.queryResult.intent.displayName;
