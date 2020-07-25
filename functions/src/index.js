@@ -54,6 +54,6 @@ exports.dialogflowFirebaseFulfillment = functions.https.onRequest((req, res) => 
       res.json({ fulfillmentText: output });
     })
     .catch(() => {
-      res.json({ fulfillmentText: 'I don\'t know this body, does it exist ?!' });
+      res.json({ fulfillmentText: 'I don\'t know this body, sorry... Can you say it again please ?' });
     });
 });
