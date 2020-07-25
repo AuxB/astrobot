@@ -4,6 +4,17 @@ const http: any = require('https');
 const functions: any = require('firebase-functions');
 
 /**
+* @global - Object type use for fullfiled data bodies
+*/
+const bodySys: {
+  name: string,
+  mass: string,
+  radius: string,
+  gravity: string,
+  isPlanet: boolean,
+} = {};
+
+/**
 * @function - Compare multiple value to determine the sentences to send
 * @param {object} firstBody - The current body
 * @param {object} scndBody - The second body to compare
@@ -17,7 +28,7 @@ function compareBody(firstBody: Object, scndBody: Object): string {
     messageCompare += `${firstBody.name} is smaller than ${scndBody.name} `;
   }
   if (firstBody.gravity > scndBody.gravity) {
-    messageCompare += 'and has a higher gravity  !';
+    messageCompare += 'and has a higher gravity !';
   } else {
     messageCompare += 'and has a lower gravity !';
   }
@@ -61,7 +72,6 @@ function setOutput(firstBody: Object, scndBody: Object, intentType: string): str
 * @param {object} newBody - The second body to compare
 * @param {object} intentType - The type of the intent
 * @return {string}
-@
 */
 function getGlobalInfo(bodyName: string, newBody: string, intentType: string): any {
   return new Promise((resolve, reject) => {
@@ -76,35 +86,21 @@ function getGlobalInfo(bodyName: string, newBody: string, intentType: string): a
         if (response.bodies.length <= 0 || intentType === '' || bodyName === '') {
           return reject(new Error('Error calling the astral API'));
         }
-        const firstBody: {
-          name: string,
-          mass: string,
-          radius: string,
-          radius: string,
-          gravity: string,
-          isPlanet: boolean,
-        } = {
-          name: response.bodies[0].englishName,
-          mass: response.bodies[0].mass.massValue,
-          radius: response.bodies[0].meanRadius,
-          gravity: response.bodies[0].gravity,
-          isPlanet: response.bodies[0].isPlanet,
-        };
 
-        const scndBody: {
-          name: string,
-          mass: string,
-          radius: string,
-          radius: string,
-          gravity: string,
-          isPlanet: boolean,
-        } = {
-          name: response.bodies[1].englishName,
-          mass: response.bodies[1].mass.massValue,
-          radius: response.bodies[1].meanRadius,
-          gravity: response.bodies[1],
-          isPlanet: response.bodies[1],
-        };
+        const firstBody = Object.create(bodySys);
+        firstBody.name = response.bodies[0].englishName;
+        firstBody.mass = response.bodies[0].mass.massValue;
+        firstBody.radius = response.bodies[0].meanRadius;
+        firstBody.gravity = response.bodies[0].gravity;
+        firstBody.isPlanet = response.bodies[0].isPlanet;
+
+        const scndBody = Object.create(bodySys);
+        scndBody.name = response.bodies[1].englishName;
+        scndBody.mass = response.bodies[1].mass.massValue;
+        scndBody.radius = response.bodies[1].meanRadius;
+        scndBody.gravity = response.bodies[1].gravity;
+        scndBody.isPlanet = response.bodies[1].isPlanet;
+
         // Create response
         const output: string = setOutput(firstBody, scndBody, intentType);
 
@@ -123,11 +119,10 @@ function getGlobalInfo(bodyName: string, newBody: string, intentType: string): a
 * @param {object} req - The request of Dialogflow
 * @param {object} res - The response send to dialogflow
 * @return {object}
-@
 */
 exports.dialogflowFirebaseFulfillment = functions.https.onRequest((req, res) => {
   // retrieve data bodyname and display send by the dialogflow bot
-  const bodyName: string = req.body.queryResult.outputContexts.parameters['body-name'];
+  const bodyName: string = req.body.queryResult.outputContexts[0].parameters['body-name'];
   const newBodyName: string = req.body.queryResult.parameters['new-body-name'] || 'S/2017 J 8';
   const intentType: string = req.body.queryResult.intent.displayName;
   getGlobalInfo(bodyName, newBodyName, intentType)
