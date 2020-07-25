@@ -19,6 +19,7 @@ Be carreful, only in english (He try to learn french but it's a not an easy lang
 + Firebase [Documentation](https://firebase.google.com/docs/functions/get-started).
 + Mocha [Documentation](https://mochajs.org/).
 + Chai [Documentation](https://www.chaijs.com/).
++ Flow [Documentation](https://flow.org/).
 + Airbnb style guide [Documentation](https://github.com/airbnb/javascript).
 + Solor System API[Documentation](https://api.le-systeme-solaire.net/en/).
 
