@@ -13,9 +13,9 @@ function compareBody(firstBody: Object, scndBody: Object): string {
     messageCompare += `${firstBody.name} is smaller than ${scndBody.name} `;
   }
   if (firstBody.gravity > scndBody.gravity) {
-    messageCompare += 'And has a higher gravity  !';
+    messageCompare += 'and has a higher gravity  !';
   } else {
-    messageCompare += 'And has a lower gravity !';
+    messageCompare += 'and has a lower gravity !';
   }
   return messageCompare;
 }
@@ -40,6 +40,7 @@ function setOutput(firstBody: Object, scndBody: Object, intentType: string): str
       message = compareBody(firstBody, scndBody);
       break;
     default:
+      Error('Error in the intent type');
       break;
   }
   return message;
@@ -71,8 +72,8 @@ function getGlobalInfo(bodyName: string, newBody: string, intentType: string): a
           name: response.bodies[0].englishName,
           mass: response.bodies[0].mass.massValue,
           radius: response.bodies[0].meanRadius,
-          gravity: response.bodies[0],
-          isPlanet: response.bodies[0],
+          gravity: response.bodies[0].gravity,
+          isPlanet: response.bodies[0].isPlanet,
         };
 
         const scndBody: {
@@ -95,9 +96,6 @@ function getGlobalInfo(bodyName: string, newBody: string, intentType: string): a
         // Resolve the promise with the output text
         return resolve(output);
       });
-      res.on('error', (error) => {
-        reject(new Error(`Error calling the astral API: ${error}`));
-      });
     });
   });
 }
@@ -105,7 +103,7 @@ function getGlobalInfo(bodyName: string, newBody: string, intentType: string): a
 exports.dialogflowFirebaseFulfillment = functions.https.onRequest((req, res) => {
   // retrieve data bodyname and displa send by the dialogflow bot
   const bodyName: string = req.body.queryResult.outputContexts.parameters['body-name'];
-  const newBodyName: string = req.body.queryResult.parameters['new-body-name'] || 'earth';
+  const newBodyName: string = req.body.queryResult.parameters['new-body-name'] || 'S/2017 J 8';
   const intentType: string = req.body.queryResult.intent.displayName;
   getGlobalInfo(bodyName, newBodyName, intentType)
     .then((output) => {
