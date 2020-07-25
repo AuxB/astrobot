@@ -21,6 +21,15 @@ const request = (bodyName, newBodyName, intentType) => ({
 });
 
 describe('getGlobalInfo', () => {
+  it('If the request is empty or wrong, send the message error', () => {
+    const req = request('', '', 'body-name');
+    const res = {
+      json: (resBody) => {
+        expect(resBody.fulfillmentText).to.equal('I don\'t know this body, sorry... Can you say it again please ?');
+      },
+    };
+    dialogflowFirebaseFulfillment(req, res);
+  });
   it('The response and request have correct type (string, object...)', () => {
     const req = request('earth', '', 'get-is-planet');
     expect(req.body.queryResult.parameters['body-name']).to.be.a('string');
@@ -33,6 +42,9 @@ describe('getGlobalInfo', () => {
     };
     dialogflowFirebaseFulfillment(req, res);
   });
+});
+
+describe('setOutput', () => {
   it('The response is exact if the body is not a planet', () => {
     const req = request('moon', '', 'get-is-planet');
     expect(req.body.queryResult.parameters['body-name']).to.be.a('string');
@@ -45,15 +57,7 @@ describe('getGlobalInfo', () => {
     };
     dialogflowFirebaseFulfillment(req, res);
   });
-  it('If the request is empty or wrong, send the message error', () => {
-    const req = request('', '', 'body-name');
-    const res = {
-      json: (resBody) => {
-        expect(resBody.fulfillmentText).to.equal('I don\'t know this body, sorry... Can you say it again please ?');
-      },
-    };
-    dialogflowFirebaseFulfillment(req, res);
-  });
+
   it('The response is not empty', () => {
     const req = request('moon', 'mars', 'get-body-global-info');
     const res = {

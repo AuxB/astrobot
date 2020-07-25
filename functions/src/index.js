@@ -96,6 +96,9 @@ function getGlobalInfo(bodyName: string, newBody: string, intentType: string): a
         // Resolve the promise with the output text
         return resolve(output);
       });
+      res.on('error', (error) => {
+        reject(new Error(`Error calling the astral API: ${error}`));
+      });
     });
   });
 }
