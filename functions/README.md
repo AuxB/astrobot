@@ -4,13 +4,13 @@ This agent tell you anything (or almost) about our solar system !
 Go onto this link to ask him something : https://bot.dialogflow.com/83a681ea-8900-436a-9b30-0e59904b5177
 Be carreful, only in english (He try to learn french but it's a not an easy language !)
 
-### Exemple of sentences can we ask to Astrobot :
-"Hello Astrobot !"
-"How are you ?"
-"Tell me something about Earth please?"
-"Can you compare it with Uranus ?" 
-"The moon is a planet ?"
-"Thank you, bye !"
+## Exemple of sentences can we ask to Astrobot :
++"Hello Astrobot !"
++"How are you ?"
++"Tell me something about Earth please?"
++"Can you compare it with Uranus ?" 
++"The moon is a planet ?"
++"Thank you, bye !"
 
 ## Technologies and References
 + NodeJs.
