@@ -11,11 +11,13 @@ const request = (bodyName, newBodyName, intentType) => ({
       intent: {
         displayName: intentType,
       },
-      outputContexts: {
-        parameters: {
-          'body-name': bodyName,
+      outputContexts: [
+        {
+          parameters: {
+            'body-name': bodyName,
+          },
         },
-      },
+      ],
     },
   },
 });
@@ -95,7 +97,7 @@ describe('compareBody', () => {
     const res = {
       json: (resBody) => {
         expect(resBody.fulfillmentText).to.be.a('string');
-        expect(resBody.fulfillmentText).to.equal('Saturn is bigger than Earth and has a lower gravity !');
+        expect(resBody.fulfillmentText).to.equal('Saturn is bigger than Earth and has a higher gravity !');
       },
     };
     dialogflowFirebaseFulfillment(req, res);
