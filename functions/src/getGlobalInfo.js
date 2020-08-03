@@ -2,15 +2,15 @@
 const http: any = require('https');
 const setOutput = require('./setOutput');
 /**
-* @global - Object type use for fullfiled data bodies
+* @global - Type use for fullfiled data bodies
 */
-const bodySys: {
+type SolarSystemBody = {
   name: string,
   mass: string,
   radius: string,
   gravity: string,
   isPlanet: boolean,
-} = {};
+};
 /**
 * @function - Make call api with the parameters and create object to store the data
 * @param {object} bodyName - The current body
@@ -33,19 +33,20 @@ module.exports = function getInfos(bodyName: string,
           return reject(new Error('Error calling the astral API'));
         }
 
-        const firstBody = Object.create(bodySys);
-        firstBody.name = response.bodies[0].englishName;
-        firstBody.mass = response.bodies[0].mass.massValue;
-        firstBody.radius = response.bodies[0].meanRadius;
-        firstBody.gravity = response.bodies[0].gravity;
-        firstBody.isPlanet = response.bodies[0].isPlanet;
-
-        const scndBody = Object.create(bodySys);
-        scndBody.name = response.bodies[1].englishName;
-        scndBody.mass = response.bodies[1].mass.massValue;
-        scndBody.radius = response.bodies[1].meanRadius;
-        scndBody.gravity = response.bodies[1].gravity;
-        scndBody.isPlanet = response.bodies[1].isPlanet;
+        const firstBody: SolarSystemBody = {
+          name: response.bodies[0].englishName,
+          mass: response.bodies[0].mass.massValue,
+          radius: response.bodies[0].meanRadius,
+          gravity: response.bodies[0].gravity,
+          isPlanet: response.bodies[0].isPlanet,
+        };
+        const scndBody: SolarSystemBody = {
+          name: response.bodies[1].englishName,
+          mass: response.bodies[1].mass.massValue,
+          radius: response.bodies[1].meanRadius,
+          gravity: response.bodies[1].gravity,
+          isPlanet: response.bodies[1].isPlanet,
+        };
 
         // Create response
         const output: string = setOutput(firstBody, scndBody, intentType);
