@@ -18,7 +18,7 @@ const bodySys: {
 * @param {object} intentType - The type of the intent
 * @return {string}
 */
-module.exports = function getGlobalInfo(bodyName: string, newBody: string, intentType: string): any {
+module.exports = function getInfos(bodyName: string, newBody: string, intentType: string): any {
   return new Promise((resolve, reject) => {
     const path: string = `https://api.le-systeme-solaire.net/rest/bodies/?satisfy=any&filter[]=englishName,eq,${bodyName}&filter[]=englishName,eq,${newBody}&data=englishName,inclinaison,meanRadius,gravity,mass,massValue,isPlanet`;
 
