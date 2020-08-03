@@ -1,6 +1,8 @@
 const http = require('https');
 
 const functions = require('firebase-functions');
+
+const compareBody = require('./compareBody');
 /**
 * @global - Object type use for fullfiled data bodies
 */
@@ -8,37 +10,12 @@ const functions = require('firebase-functions');
 
 const bodySys = {};
 /**
-* @function - Compare multiple value to determine the sentences to send
-* @param {object} firstBody - The current body
-* @param {object} scndBody - The second body to compare
-* @return {string}
-*/
-
-function compareBody(firstBody, scndBody) {
-  let messageCompare = '';
-
-  if (firstBody.radius > scndBody.radius) {
-    messageCompare += `${firstBody.name} is bigger than ${scndBody.name} `;
-  } else {
-    messageCompare += `${firstBody.name} is smaller than ${scndBody.name} `;
-  }
-
-  if (firstBody.gravity > scndBody.gravity) {
-    messageCompare += 'and has a higher gravity !';
-  } else {
-    messageCompare += 'and has a lower gravity !';
-  }
-
-  return messageCompare;
-}
-/**
 * @function - Switch case who compare according to the intentType
 * @param {object} firstBody - The current body
 * @param {object} scndBody - The second body to compare
 * @param {object} intentType - The type of the intent
 * @return {string}
 */
-
 
 function setOutput(firstBody, scndBody, intentType) {
   let message = '';
