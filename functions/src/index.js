@@ -1,67 +1,6 @@
 // @flow
-
-const http: any = require('https');
 const functions: any = require('firebase-functions');
-const setOutput = require('./setOutput');
-
-/**
-* @global - Object type use for fullfiled data bodies
-*/
-const bodySys: {
-  name: string,
-  mass: string,
-  radius: string,
-  gravity: string,
-  isPlanet: boolean,
-} = {};
-
-/**
-* @function - Make call api with the parameters and create object to store the data
-* @param {object} bodyName - The current body
-* @param {object} newBody - The second body to compare
-* @param {object} intentType - The type of the intent
-* @return {string}
-*/
-function getGlobalInfo(bodyName: string, newBody: string, intentType: string): any {
-  return new Promise((resolve, reject) => {
-    const path: string = `https://api.le-systeme-solaire.net/rest/bodies/?satisfy=any&filter[]=englishName,eq,${bodyName}&filter[]=englishName,eq,${newBody}&data=englishName,inclinaison,meanRadius,gravity,mass,massValue,isPlanet`;
-
-    http.get(path, (res) => {
-      let data: string = '';
-      res.on('data', (d) => { data += d; });
-      res.on('end', () => {
-        // After all the data has been received parse the JSON for desired data
-        const response: any = JSON.parse(data);
-        if (response.bodies.length <= 0 || intentType === '' || bodyName === '') {
-          return reject(new Error('Error calling the astral API'));
-        }
-
-        const firstBody = Object.create(bodySys);
-        firstBody.name = response.bodies[0].englishName;
-        firstBody.mass = response.bodies[0].mass.massValue;
-        firstBody.radius = response.bodies[0].meanRadius;
-        firstBody.gravity = response.bodies[0].gravity;
-        firstBody.isPlanet = response.bodies[0].isPlanet;
-
-        const scndBody = Object.create(bodySys);
-        scndBody.name = response.bodies[1].englishName;
-        scndBody.mass = response.bodies[1].mass.massValue;
-        scndBody.radius = response.bodies[1].meanRadius;
-        scndBody.gravity = response.bodies[1].gravity;
-        scndBody.isPlanet = response.bodies[1].isPlanet;
-
-        // Create response
-        const output: string = setOutput(firstBody, scndBody, intentType);
-
-        // Resolve the promise with the output text
-        return resolve(output);
-      });
-      res.on('error', (error) => {
-        reject(new Error(`Error calling the astral API: ${error}`));
-      });
-    });
-  });
-}
+const getGlobalInfo = require('./getGlobalInfo');
 
 /**
 * @function - Retrieve data from Dialogflow and send the response through getGlobalInfo and res.json

@@ -30,4 +30,4 @@ module.exports = function setOutput(firstBody: Object, scndBody: Object, intentT
       break;
   }
   return message;
-}
+};
