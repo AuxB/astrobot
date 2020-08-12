@@ -14,7 +14,7 @@ exports.dialogflowFirebaseFulfillment = functions.https.onRequest((req, res) => 
   const newBodyName: string = req.body.queryResult.parameters['new-body-name'] || 'S/2017 J 8';
   const intentType: string = req.body.queryResult.intent.displayName;
   getGlobalInfo(bodyName, newBodyName, intentType)
-    .then((output) => {
+    .then((output: string) => {
       res.json({ fulfillmentText: output });
     })
     .catch(() => {
