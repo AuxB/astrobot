@@ -1,16 +1,8 @@
 // @flow
+import type { SolarSystemBody } from './SolarSystemBody';
+
 const axios = require('axios');
 const setOutput = require('./setOutput');
-/**
-* @global - Type use for fullfiled data bodies
-*/
-type SolarSystemBody = {
-  name: string,
-  mass: string,
-  radius: string,
-  gravity: string,
-  isPlanet: boolean,
-};
 /**
 * @function - Make call api with the parameters and create object to store the data
 * @param {object} bodyName - The current body

@@ -1,4 +1,6 @@
 // @flow
+import type { SolarSystemBody } from './SolarSystemBody';
+
 const compareBody = require('./compareBody');
 
 /**
@@ -8,7 +10,8 @@ const compareBody = require('./compareBody');
 * @param {object} intentType - The type of the intent
 * @return {string}
 */
-module.exports = function setOut(firstBody: Object, scndBody: Object, intentType: string): string {
+module.exports = function setOut(firstBody: SolarSystemBody,
+  scndBody: SolarSystemBody, intentType: string): string {
   let message: string = '';
   switch (intentType) {
     case 'get-body-global-info':

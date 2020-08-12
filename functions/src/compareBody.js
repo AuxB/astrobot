@@ -1,11 +1,14 @@
 // @flow
+import type { SolarSystemBody } from './SolarSystemBody';
+
 /**
 * @function - Compare multiple value to determine the sentences to send
 * @param {object} firstBody - The current body
 * @param {object} scndBody - The second body to compare
 * @return {string}
 */
-module.exports = function compareBody(firstBody: Object, scndBody: Object): string {
+module.exports = function compareBody(firstBody: SolarSystemBody,
+  scndBody: SolarSystemBody): string {
   let messageCompare: string = '';
   if (firstBody.radius > scndBody.radius) {
     messageCompare += `${firstBody.name} is bigger than ${scndBody.name} `;
