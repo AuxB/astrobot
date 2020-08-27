@@ -1,8 +1,8 @@
 // @flow
-import type { SolarSystemBody } from './SolarSystemBody';
+import type { SolarSystemBody } from '../SolarSystemBody';
 
 const axios = require('axios');
-const setOutput = require('./setOutput');
+const setOutput = require('../setOutput');
 /**
 * @function - Make call api with the parameters and create object to store the data
 * @param {object} bodyName - The current body
@@ -10,7 +10,7 @@ const setOutput = require('./setOutput');
 * @param {object} intentType - The type of the intent
 * @return {string}
 */
-module.exports = function getInfos(bodyName: string,
+module.exports = function getBodyData(bodyName: string,
   newBody: string, intentType: string): Promise<string> {
   return new Promise((resolve, reject) => {
     const path: string = `https://api.le-systeme-solaire.net/rest/bodies/?satisfy=any&filter[]=englishName,eq,${bodyName}&filter[]=englishName,eq,${newBody}&data=englishName,inclinaison,meanRadius,gravity,mass,massValue,isPlanet`;

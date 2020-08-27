@@ -1,5 +1,7 @@
 const { expect } = require('chai');
+const sinon = require('sinon');
 const { dialogflowFirebaseFulfillment } = require('../src/index');
+const { getBodyData } = require('../src/api/getBodyData');
 
 const request = (bodyName, newBodyName, intentType) => ({
   body: {
@@ -22,7 +24,7 @@ const request = (bodyName, newBodyName, intentType) => ({
   },
 });
 
-describe('getGlobalInfo', () => {
+describe('getBodyType', () => {
   it('If the request is empty or wrong, send the message error', () => {
     const req = request('', '', 'body-name');
     const res = {
